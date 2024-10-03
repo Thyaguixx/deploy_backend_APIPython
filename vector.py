@@ -88,7 +88,7 @@ def dataset_to_vector(dataset_name, use_saved_embeddings=False):
         dataset = dataset.fillna("Informação não disponível")
         
         dataset = dataset.drop_duplicates(subset=['reviewer_id'])
-        dataset = dataset.head(100)  #dataset = dataset.select(range(min(len(dataset), 1000)))  # Limitar a 4000 itens
+        dataset = dataset.head(20000)  #dataset = dataset.select(range(min(len(dataset), 1000)))  # Limitar a 4000 itens
 
         print(f"Total de itens no dataset: {len(dataset)}")
 
