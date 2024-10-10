@@ -83,35 +83,60 @@ def dataset_to_vector(dataset_name, use_saved_embeddings=False):
         print("Retriever FAISS criado com sucesso.")    
         return retriever
     else:
-        print(f"Carregando o dataset: {dataset_name}")
-        dataset = pd.read_json('dados_dataset.json')
-        dataset = dataset.fillna("Informação não disponível")
+        # print(f"Carregando o dataset: {dataset_name}")
+        # dataset = pd.read_json('dados_dataset.json')
+        # dataset = dataset.fillna("Informação não disponível")
         
-        dataset = dataset.drop_duplicates(subset=['reviewer_id'])
-        dataset = dataset.head(500)  #dataset = dataset.select(range(min(len(dataset), 1000)))  # Limitar a 4000 itens
+        # dataset = dataset.drop_duplicates(subset=['reviewer_id'])
+        # dataset = dataset.head(500)  #dataset = dataset.select(range(min(len(dataset), 1000)))  # Limitar a 4000 itens
+
+        # print(f"Total de itens no dataset: {len(dataset)}")
+
+        # texts = []
+        # for _, item in dataset.iterrows():  # Use iterrows() para iterar sobre o DataFrame
+        #     combined_text = " | ".join([ 
+        #         f"produto: {item['product_name']} | "
+        #         f"nome_produto: {item['product_name']} | "
+        #         f"avaliacao: {item['overall_rating']} | "
+        #         f"marca_produto: {item['product_brand']} | "
+        #         f"categoria_site_lv1: {item['site_category_lv1']} | "
+        #         f"categoria_site_lv2: {item['site_category_lv2']} | "
+        #         f"titulo_avaliacao: {item['review_title']} | "
+        #         f"recomendar_ao_amigo: {item['recommend_to_a_friend']} | "
+        #         f"ano_nascimento_revisor: {item['reviewer_birth_year']} | "
+        #         f"genero_revisor: {item['reviewer_gender']} | "
+        #         f"estado_revisor: {item['reviewer_state']}"
+        #     ])
+
+        #     # Aplicar a limpeza do texto
+        #     cleaned_text = preprocess_text(combined_text)
+        #     texts.append(cleaned_text)
+        print(f"Carregando o dataset: {dataset_name}")
+        dataset = load_dataset(dataset_name, split='train')
+
+        dataset = dataset.select(range(min(len(dataset), 20000)))  # Limitar a 4000 itens
 
         print(f"Total de itens no dataset: {len(dataset)}")
 
         texts = []
-        for _, item in dataset.iterrows():  # Use iterrows() para iterar sobre o DataFrame
+        for item in dataset:
             combined_text = " | ".join([ 
-                f"produto: {item['product_name']} | "
-                f"nome_produto: {item['product_name']} | "
-                f"avaliacao: {item['overall_rating']} | "
-                f"marca_produto: {item['product_brand']} | "
-                f"categoria_site_lv1: {item['site_category_lv1']} | "
-                f"categoria_site_lv2: {item['site_category_lv2']} | "
-                f"titulo_avaliacao: {item['review_title']} | "
-                f"recomendar_ao_amigo: {item['recommend_to_a_friend']} | "
-                f"ano_nascimento_revisor: {item['reviewer_birth_year']} | "
-                f"genero_revisor: {item['reviewer_gender']} | "
-                f"estado_revisor: {item['reviewer_state']}"
+                f"produto: {item.get('product_name', '')} | "
+                f"nome_produto: {item.get('product_name', '')} | "
+                f"avaliacao: {item.get('overall_rating', '')} | "
+                f"marca_produto: {item.get('product_brand', '')} | "
+                f"categoria_site_lv1: {item.get('site_category_lv1', '')} | "
+                f"categoria_site_lv2: {item.get('site_category_lv2', '')} | "
+                f"titulo_avaliacao: {item.get('review_title', '')} | "
+                f"recomendar_ao_amigo: {item.get('recommend_to_a_friend', '')} | "
+                f"ano_nascimento_revisor: {item.get('reviewer_birth_year', '')} | "
+                f"genero_revisor: {item.get('reviewer_gender', '')} | "
+                f"estado_revisor: {item.get('reviewer_state', '')}"
             ])
-
             # Aplicar a limpeza do texto
             cleaned_text = preprocess_text(combined_text)
-            texts.append(cleaned_text)
-
+            texts.append(combined_text)
+            
         # Implementar Sliding Window Chunking
         sliding_window_size = 500
         sliding_overlap = 50
