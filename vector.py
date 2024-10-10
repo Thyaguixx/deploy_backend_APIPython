@@ -114,7 +114,7 @@ def dataset_to_vector(dataset_name, use_saved_embeddings=False):
         print(f"Carregando o dataset: {dataset_name}")
         dataset = load_dataset(dataset_name, split='train')
 
-        dataset = dataset.select(range(min(len(dataset), 20000)))  # Limitar a 4000 itens
+        dataset = dataset.select(range(min(len(dataset), 100)))  # Limitar a 4000 itens
 
         print(f"Total de itens no dataset: {len(dataset)}")
 
